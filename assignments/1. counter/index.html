@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Basic Counter App</title>
+    <style>
+      body{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      input[type="button"]{
+        padding: 0.2em 1em;
+        border: 1.5px solid black;
+        font-size: 18px;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <h1>0</h1>
+    <div class="buttons">
+      <input type="button" class="increment" value="Increment">
+      <input type="button" class="decrement" value="Decrement">
+      <input type="button" class="reset" value="Reset">
+    </div>
+    <script>
+      const increment = document.querySelector(".increment");
+      const decrement = document.querySelector(".decrement");
+      const reset = document.querySelector(".reset");
+      const h1 = document.querySelector("h1");
+
+      function handleIncrement(event){
+        h1.textContent = +h1.textContent + 1;
+      }
+
+      function handleDecrement(event){
+        h1.textContent = +h1.textContent - 1;
+      }
+
+      function handleReset(event){
+        h1.textContent = 0;
+      }
+
+      increment.addEventListener("click",handleIncrement);
+      decrement.addEventListener("click",handleDecrement);
+      reset.addEventListener("click",handleReset);
+    </script>
+  </body>
 </html>

@@ -5,6 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Forms</title>
+    <style>
+      body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .sign-up{
+        background: lightgrey;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3.5em 1em;
+        border-radius: 8px;
+        width: 300px;
+        box-shadow: 4px 4px 4px rgba(0,0,0,0.4);
+      }
+
+      input{
+        width: 100%;
+        display: block;
+        margin-bottom: 1em;
+        padding: 0.25em 0.2em;
+        font-size: 18px;
+        border: none;
+        border-radius: 4px;
+        border: 1px solid lightskyblue;
+        outline: none;
+      }
+
+      .message{
+        text-align: center  ;
+      }
+
+      .sign-up-btn{
+       border: 1px solid black;
+       background: #ffc600;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div class="sign-up">
+      <form action="#">
+        <input class="fullName" type="text" placeholder="Full Name">
+        <input class="email" type="email" placeholder="Email">
+        <input class="password" type="password" placeholder="password">
+        <input class="sign-up-btn" type="button" value="Sign Up">
+      </form>
+      <div class="message">
+
+      </div>
+    </div>
+    <script>
+      const signUp = document.querySelector(".sign-up-btn");
+      let fullName = document.querySelector(".fullName");
+      let email = document.querySelector(".email");
+      let password = document.querySelector(".password");
+      let message = document.querySelector(".message");
+      
+      function handleSignUp(event){
+        let fullName_val = fullName.value;
+        let email_val = email.value;
+        let password_val = password.value;
+        let message_val = message.value;
+        let missingField = "";
+        if(!fullName_val)missingField = "Name";
+        if(!email_val) missingField = "Email";
+        if(!password_val) missingField = "Password";
+        message.innerHTML = `${missingField} can't be empty`
+        if(!fullName_val || !password_val || !email_val)return;
+        else{
+          message.innerHTML = `You are ${fullName_val}, Your email: ${email_val} and password is ${password_val}`
+        }
+
+      }
+      signUp.addEventListener("click",handleSignUp)
+    </script>
+  </body>
 </html>
