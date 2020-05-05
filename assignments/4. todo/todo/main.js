@@ -1,11 +1,20 @@
 let todoInput_DOM = document.querySelector(".initial-input");
 let toggleCheckboxes_DOM = document.querySelector(".toggle-all-checkboxes");
-let ul_DOM = document.querySelector("ul")
+let ul_DOM = document.querySelector("ul");
 
 let todoArr = [];
 let isChecked = true;
+let input_id = ""
 
-function printAllTodos(){
+function randomIdGenerator(){
+    let randomId = "a"
+    for(let i = 0;i < 10;i++){
+        randomId += Math.floor(Math.random() * 10);
+    }
+    return randomId;
+}
+
+function printAllTodos(todoArr){
     ul_DOM.innerHTML = "";
     todoArr.forEach(todoItem => {
         ul_DOM.innerHTML += `
@@ -48,11 +57,11 @@ function insertInfoAtEnd(){
             },0)} items left
         </div>
         <div>
-            <button class="all-tasks">All</button>
-            <button class="active-tasks">Active</button>
-            <button class="completed-tasks">Completed</button>
+            <button class="all-tasks last-li-button">All</button>
+            <button class="active-tasks last-li-button">Active</button>
+            <button class="completed-tasks last-li-button">Completed</button>
         </div>
-        <button class="clear-completed-tasks">
+        <button class="clear-completed-tasks last-li-button">
             Clear completed
         </button>
     </li>
@@ -66,7 +75,7 @@ function insertInfoAtEnd(){
 function handleIndividualCloseTodo(event){
     const getId = event.target.parentElement.getAttribute("id");
     todoArr = todoArr.filter(todoItem => todoItem.id !== getId);
-    printAllTodos();
+    printAllTodos(todoArr);
     if(todoArr.length) {
         ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
         
@@ -81,7 +90,7 @@ function handleIndividualTodoCheckbox(event){
    const todoItemObj = todoArr[index];
    todoItemObj.checked = !todoItemObj.checked;
    todoArr[index] = todoItemObj;
-   printAllTodos();
+   printAllTodos(todoArr);
    if(todoArr.length) {
        ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
        
@@ -98,10 +107,10 @@ function handleTodoAdd(event){
     todoArr.push({
         todo:todoValue,
         checked: false,
-        id:uuidv4()
+        id:`${randomIdGenerator()}`
     })
 
-    printAllTodos();
+    printAllTodos(todoArr);
     if(todoArr.length) {
         ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
         ;
@@ -115,7 +124,7 @@ function handleTodoAdd(event){
 function handleClickOnToggleCheckboxes(event){
     if(!event.target.closest(".toggle-all-checkboxes")) return;
     todoArr = todoArr.map(todoItem => ({id:todoItem.id,todo:todoItem.todo,checked:isChecked}) );
-    printAllTodos();
+    printAllTodos(todoArr);
     if(todoArr.length) {
         ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
         
@@ -123,10 +132,35 @@ function handleClickOnToggleCheckboxes(event){
     isChecked = !isChecked;
 }
 
-// function handleClickOnActiveTasks(event){
-//     if(!event.target.closest(".active-tasks"))return;
-//     let activeTasks = 
-// }
+function handleClickOnActiveTasksButton(event){
+    if(!event.target.closest(".active-tasks"))return;
+    let activeTodoArr = todoArr.filter(todoItem => !todoItem.checked);
+    printAllTodos(activeTodoArr);
+    
+    ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
+    //event.target.closest(".active-tasks").classList.add("selected")
+}
+
+function handleClickOnAllTasksButton(event){
+    if(!event.target.closest(".all-tasks")) return;
+    printAllTodos(todoArr);
+    ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
+}
+
+function handleClickOnCompletedTasksButton(event){
+    if(!event.target.closest(".completed-tasks")) return;
+    let completedTodoArr = todoArr.filter(todoItem => todoItem.checked);
+    printAllTodos(completedTodoArr);
+    ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
+}
+
+function handleClickOnClearCompletedTasksButton(event){
+    if(!event.target.closest(".clear-completed-tasks")) return;
+    todoArr = todoArr.filter(todoItem => !todoItem.checked);
+    printAllTodos(todoArr);
+    ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
+
+}
 
 todoInput_DOM.addEventListener("keyup",handleTodoAdd);
 
@@ -134,33 +168,54 @@ document.body.addEventListener("click",function(event){
     handleClickOnToggleCheckboxes(event);
 
     //handle click on clicking activeTasks;
-    //handleClickOnActiveTasks(event);
+    handleClickOnActiveTasksButton(event);
+
+    //handle click on clicking allTasks;
+    handleClickOnAllTasksButton(event);
+
+    //handle click on clicking completed tasks
+    handleClickOnCompletedTasksButton(event);
+
+    //handle clear-completed-tasks
+    handleClickOnClearCompletedTasksButton(event);
+})
+
+document.body.addEventListener("keyup",function(event){
+    if(event.keyCode !== 13) return;
+    if(event.target.closest(".initial-input")) return;
+    handleClickOutsideOrEnterOnEditTodo(event);
+    
+})
+
+function handleClickOutsideOrEnterOnEditTodo(event){
+    if(input_id.length){
+        let selector = `#${input_id}`;
+        let newTodo = document.querySelector(selector);
+        let index = todoArr.findIndex(todoItem => todoItem.id === input_id);
+        let toBeReplacedTodo = todoArr[index] ;
+        toBeReplacedTodo = {id:toBeReplacedTodo.id,checked:toBeReplacedTodo.checked,todo:newTodo.children[1].value};
+        todoArr[index] = toBeReplacedTodo;
+        printAllTodos(todoArr);
+        ul_DOM.insertAdjacentHTML("beforeend",insertInfoAtEnd());
+       input_id = "";
+    }
+}
+
+document.body.addEventListener("dblclick",function(event){
+    if(!event.target.closest(".todo-item")) return;
+    let liElement = event.target.closest(".todo-item");
+
+    let oldElement = liElement.querySelector(".todo-item-content-span")
+    input_id = oldElement.parentElement.getAttribute("id");
+
+
+    let todoItemInputContentSpan = document.createElement("input");
+    todoItemInputContentSpan.className = "todo-item-input-content-span"
+    
+    todoItemInputContentSpan.autofocus = true;
+    todoItemInputContentSpan.value = oldElement.textContent.trim();
+
+    liElement.replaceChild(todoItemInputContentSpan,oldElement);
 })
 
 
-
-
-
-// if(todoArr.length){
-//     console.log("entered")
-//     ul_DOM.innerHTML += `
-//     <li class="last-li-one">
-//         <div class="items-left">
-//             ${todoArr.reduce((todosLeft,todo) => {
-//                 if(!todo.checked) todosLeft++
-//                 return todosLeft;
-//             },0)} items left
-//         </div>
-//         <div>
-//         <button>All</button>
-//         <button>Active</button>
-//         <button>Completed</button>
-//         </div>
-//         <button>
-//         Clear completed
-//         </button>
-//     </li>
-//         <li class="last-li-two">
-//     </li>
-// `
-// }
