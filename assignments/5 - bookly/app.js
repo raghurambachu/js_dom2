@@ -30,10 +30,11 @@ hideBooksDOM.addEventListener("click",function(event){
     ulDOM.classList.toggle("toggle-display");
 })
 
-searchBooksDOM.addEventListener("submit",function(event){
-    event.preventDefault()
+searchBooksInputDOM.addEventListener("input",function(event){
+    // event.preventDefault()
     const bookName = searchBooksInputDOM.value.trim().toLowerCase();
     
     let searchedBooks = allBooks.filter(book => book.includes(bookName));
     createUI(searchedBooks);
 })
+
