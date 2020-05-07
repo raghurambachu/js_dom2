@@ -202,3 +202,9 @@ input{
     width: 100%;
     text-align: left !important;
 }
+
+footer{
+    position: absolute;
+    bottom: 0;
+    left: 43%;
+}

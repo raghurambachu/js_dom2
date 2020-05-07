@@ -143,3 +143,8 @@ h1, h2{
 #tabbed-content .panel.active{
     display: block;
 }
+
+
+.toggle-display{
+    display: none;
+}
